@@ -1,0 +1,79 @@
+# Core configuration for the internal developer platform (Backstage).
+#
+# Secrets and environment-specific endpoints are injected at runtime via
+# environment variables using ${VAR} substitution. No credentials are stored in
+# this file; supply them through a git-ignored .env file or a secret manager.
+
+app:
+  title: Internal Developer Platform
+  baseUrl: ${APP_BASE_URL}
+
+organization:
+  name: Platform Engineering
+
+backend:
+  baseUrl: ${BACKEND_BASE_URL}
+  listen:
+    port: 7007
+    # Bind to all interfaces inside the container; front with a reverse proxy.
+    host: 0.0.0.0
+  # Content Security Policy. Keep narrow; widen deliberately per integration.
+  csp:
+    connect-src: ["'self'", 'http:', 'https:']
+  cors:
+    origin: ${APP_BASE_URL}
+    methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
+    credentials: true
+  database:
+    client: pg
+    connection:
+      host: ${POSTGRES_HOST}
+      port: ${POSTGRES_PORT}
+      user: ${POSTGRES_USER}
+      password: ${POSTGRES_PASSWORD}
+      # Require a verified TLS connection to the database outside local dev.
+      ssl:
+        rejectUnauthorized: true
+  cache:
+    store: memory
+
+integrations:
+  github:
+    - host: github.com
+      # GitHub App or personal access token, injected from the environment.
+      # Scoped to read repository contents and run software templates.
+      token: ${GITHUB_TOKEN}
+
+# Software catalog ingestion. A single location index is the entry point; it
+# registers the organizational model and the platform's core entities.
+catalog:
+  rules:
+    - allow:
+        - Component
+        - System
+        - Domain
+        - API
+        - Resource
+        - Location
+        - Group
+        - User
+        - Template
+  locations:
+    - type: file
+      target: ./catalog/all.yaml
+
+auth:
+  # Literal environment selector (not a secret). Override per deployment.
+  environment: development
+  providers:
+    github:
+      development:
+        clientId: ${AUTH_GITHUB_CLIENT_ID}
+        clientSecret: ${AUTH_GITHUB_CLIENT_SECRET}
+
+# Scaffolder (software templates) is configured with its template set.
+scaffolder: {}
+
+# Role-based access control over catalog and scaffolder actions.
+permission:
+  enabled: true

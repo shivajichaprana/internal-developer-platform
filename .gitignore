@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-types/
+.turbo/
+
+# Local environment and secrets (never commit real values)
+.env
+.env.*
+*.local
+
+# TechDocs / generated site artifacts
+site/
+.techdocs/
+
+# Editor / OS / coverage
+.DS_Store
+*.log
+coverage/
