@@ -1,0 +1,36 @@
+# Location index for the software catalog.
+#
+# This is the single entry point registered by the platform (see
+# catalog.locations in app-config.yaml). It pulls in the organizational model and
+# declares the core domain and system. Additional location targets — systems,
+# APIs, and software templates — are appended to the Location below as they are
+# onboarded.
+---
+apiVersion: backstage.io/v1alpha1
+kind: Location
+metadata:
+  name: platform-bootstrap
+  description: Registers the organizational model and platform-managed entities.
+spec:
+  type: file
+  targets:
+    - ./org.yaml
+---
+apiVersion: backstage.io/v1alpha1
+kind: Domain
+metadata:
+  name: platform
+  title: Platform
+  description: Shared platform capabilities, golden paths, and developer tooling.
+spec:
+  owner: platform-engineering
+---
+apiVersion: backstage.io/v1alpha1
+kind: System
+metadata:
+  name: developer-platform
+  title: Internal Developer Platform
+  description: Service catalog, software templates, and golden paths for product teams.
+spec:
+  owner: platform-engineering
+  domain: platform

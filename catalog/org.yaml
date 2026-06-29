@@ -1,0 +1,96 @@
+# Organizational model for the platform: groups (teams) and users.
+# This is the source of truth for ownership references used across the software
+# catalog. Email addresses use the reserved .invalid TLD as placeholders.
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: engineering
+  title: Engineering
+  description: Top-level engineering organization.
+spec:
+  type: department
+  profile:
+    displayName: Engineering
+  children:
+    - platform-engineering
+    - application-development
+    - site-reliability
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: platform-engineering
+  title: Platform Engineering
+  description: Owns the internal developer platform, golden paths, and shared tooling.
+spec:
+  type: team
+  profile:
+    displayName: Platform Engineering
+    email: platform-engineering@example.invalid
+  parent: engineering
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: application-development
+  title: Application Development
+  description: Builds and operates product-facing services on the platform.
+spec:
+  type: team
+  profile:
+    displayName: Application Development
+    email: application-development@example.invalid
+  parent: engineering
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: Group
+metadata:
+  name: site-reliability
+  title: Site Reliability
+  description: Owns availability, observability, and incident response.
+spec:
+  type: team
+  profile:
+    displayName: Site Reliability
+    email: site-reliability@example.invalid
+  parent: engineering
+  children: []
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: platform-admin
+  description: Platform administrator persona for the organizational model.
+spec:
+  profile:
+    displayName: Platform Admin
+    email: platform-admin@example.invalid
+  memberOf:
+    - platform-engineering
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: service-developer
+  description: Application developer persona for the organizational model.
+spec:
+  profile:
+    displayName: Service Developer
+    email: service-developer@example.invalid
+  memberOf:
+    - application-development
+---
+apiVersion: backstage.io/v1alpha1
+kind: User
+metadata:
+  name: reliability-engineer
+  description: Reliability engineer persona for the organizational model.
+spec:
+  profile:
+    displayName: Reliability Engineer
+    email: reliability-engineer@example.invalid
+  memberOf:
+    - site-reliability
