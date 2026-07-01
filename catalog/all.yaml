@@ -2,19 +2,20 @@
 #
 # This is the single entry point registered by the platform (see
 # catalog.locations in app-config.yaml). It pulls in the organizational model and
-# declares the core domain and system. Additional location targets — systems,
-# APIs, and software templates — are appended to the Location below as they are
-# onboarded.
+# declares the core domain and system, and it registers the software templates
+# offered as golden paths. Additional location targets — systems, APIs, and
+# further templates — are appended to the Location below as they are onboarded.
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Location
 metadata:
   name: platform-bootstrap
-  description: Registers the organizational model and platform-managed entities.
+  description: Registers the organizational model, platform-managed entities, and golden-path templates.
 spec:
   type: file
   targets:
     - ./org.yaml
+    - ../templates/microservice/template.yaml
 ---
 apiVersion: backstage.io/v1alpha1
 kind: Domain

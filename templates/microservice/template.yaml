@@ -1,0 +1,112 @@
+# Software template (golden path) that scaffolds a new HTTP microservice.
+#
+# The generated repository ships with a health-checked TypeScript service, a
+# test suite, a multi-stage container build, continuous integration, ownership
+# metadata, and TechDocs — so a team can go from "new service" to a running,
+# catalogued, documented component without hand-assembling boilerplate.
+apiVersion: scaffolder.backstage.io/v1beta3
+kind: Template
+metadata:
+  name: microservice
+  title: Microservice
+  description: Create a health-checked TypeScript HTTP service with CI, a container build, and docs.
+  tags:
+    - recommended
+    - service
+    - typescript
+    - nodejs
+spec:
+  owner: platform-engineering
+  type: service
+
+  parameters:
+    - title: Service details
+      required:
+        - name
+        - owner
+      properties:
+        name:
+          title: Name
+          type: string
+          description: Unique name for the service. Lower-case, hyphen-separated.
+          pattern: '^[a-z0-9]+(?:-[a-z0-9]+)*$'
+          maxLength: 63
+          ui:autofocus: true
+        description:
+          title: Description
+          type: string
+          description: A short summary of what the service does.
+        owner:
+          title: Owner
+          type: string
+          description: The team or user that will own the service.
+          ui:field: OwnerPicker
+          ui:options:
+            catalogFilter:
+              kind:
+                - Group
+                - User
+        system:
+          title: System
+          type: string
+          description: The system the service belongs to (optional).
+          ui:field: EntityPicker
+          ui:options:
+            catalogFilter:
+              kind:
+                - System
+
+    - title: Repository
+      required:
+        - repoUrl
+      properties:
+        repoUrl:
+          title: Repository location
+          type: string
+          description: The remote repository the service will be published to.
+          ui:field: RepoUrlPicker
+          ui:options:
+            allowedHosts:
+              - github.com
+
+  steps:
+    - id: fetch
+      name: Render the service from the skeleton
+      action: fetch:template
+      input:
+        url: ./skeleton
+        # Only files carrying this extension are rendered as templates (and the
+        # extension is dropped); everything else — including the CI workflow with
+        # its own ${{ ... }} expressions — is copied verbatim.
+        templateFileExtension: '.njk'
+        values:
+          name: ${{ parameters.name }}
+          description: ${{ parameters.description }}
+          owner: ${{ parameters.owner }}
+          system: ${{ parameters.system }}
+
+    - id: publish
+      name: Publish to the remote repository
+      action: publish:github
+      input:
+        repoUrl: ${{ parameters.repoUrl }}
+        description: ${{ parameters.description }}
+        defaultBranch: main
+        repoVisibility: private
+        protectDefaultBranch: true
+        requireCodeOwnerReviews: true
+
+    - id: register
+      name: Register in the software catalog
+      action: catalog:register
+      input:
+        repoContentsUrl: ${{ steps.publish.output.repoContentsUrl }}
+        catalogInfoPath: /catalog-info.yaml
+
+  output:
+    links:
+      - title: Repository
+        url: ${{ steps.publish.output.remoteUrl }}
+      - title: Open in catalog
+        icon: catalog
+        entityRef: ${{ steps.register.output.entityRef }}

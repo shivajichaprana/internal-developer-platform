@@ -1,0 +1,23 @@
+# ${{ values.name }}
+
+${{ values.description }}
+
+## Overview
+
+This service was created from the platform's golden-path template. It ships with
+a health endpoint, a test suite, a container build, and continuous integration.
+
+## Local development
+
+```bash
+npm install
+npm run dev
+```
+
+The service listens on the port given by `PORT` (default `8080`). Probe
+`GET /healthz` to confirm it is running.
+
+## Continuous integration
+
+Every push and pull request type-checks the code, runs the test suite, builds
+the application, and verifies that the container image builds cleanly.

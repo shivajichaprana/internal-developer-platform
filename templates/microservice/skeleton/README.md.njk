@@ -1,0 +1,35 @@
+# ${{ values.name }}
+
+${{ values.description }}
+
+A TypeScript HTTP microservice created from the platform golden-path template.
+It ships with a health-checked service, a test suite, a multi-stage container
+build, and a continuous-integration pipeline.
+
+## Getting started
+
+```bash
+npm install
+npm run dev        # start with reload
+npm test           # run the test suite
+npm run build      # compile to dist/
+```
+
+The service listens on the port given by `PORT` (default `8080`):
+
+- `GET /` — sample response
+- `GET /healthz` — liveness probe
+- `GET /readyz` — readiness probe
+
+## Container
+
+```bash
+docker build -t ${{ values.name }} .
+docker run --rm -p 8080:8080 ${{ values.name }}
+```
+
+## Ownership and documentation
+
+This service is registered in the developer platform's software catalog; see
+`catalog-info.yaml` for ownership and metadata. Documentation is published with
+TechDocs from the `docs/` directory.

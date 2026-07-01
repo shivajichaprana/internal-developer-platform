@@ -1,0 +1,16 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: ${{ values.name | dump }}
+${{ '  description: ' + (values.description | dump) if values.description else '' }}
+  annotations:
+    backstage.io/techdocs-ref: dir:.
+  tags:
+    - typescript
+    - nodejs
+    - service
+spec:
+  type: service
+  lifecycle: experimental
+  owner: ${{ values.owner | dump }}
+${{ '  system: ' + (values.system | dump) if values.system else '' }}
