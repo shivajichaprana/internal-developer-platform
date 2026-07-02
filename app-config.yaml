@@ -62,6 +62,20 @@ catalog:
     - type: file
       target: ./catalog/all.yaml
 
+# TechDocs renders Markdown documentation stored alongside catalog entities
+# and publishes it on each entity's page. The 'local' builder generates and
+# serves docs from the backend, which is the simplest way to get started; for
+# scale, switch to an 'external' builder that generates docs in CI and a cloud
+# publisher (awsS3 / googleGcs / azureBlobStorage).
+techdocs:
+  builder: 'local'
+  generator:
+    # 'docker' renders with the official TechDocs container for consistent
+    # output; 'local' uses a host MkDocs install with mkdocs-techdocs-core.
+    runIn: 'docker'
+  publisher:
+    type: 'local'
+
 auth:
   # Literal environment selector (not a secret). Override per deployment.
   environment: development

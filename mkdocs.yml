@@ -1,0 +1,23 @@
+# TechDocs site definition for the platform's own documentation.
+#
+# TechDocs renders the Markdown under docs/ into a static site and publishes it
+# on the platform's catalog entity. Services created from the golden-path
+# template ship their own mkdocs.yml with the same structure, so the authoring
+# experience is identical across the estate.
+site_name: Internal Developer Platform
+site_description: Service catalog, software templates, and golden paths for product teams.
+
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - Software catalog: software-catalog.md
+  - Software templates: software-templates.md
+  - Authoring documentation: authoring-docs.md
+
+plugins:
+  # techdocs-core supplies the theme integration and the Markdown extension set
+  # the platform standardizes on (admonitions, table of contents, fenced code,
+  # etc.). Individual sites rely on it rather than redefining extensions.
+  - techdocs-core

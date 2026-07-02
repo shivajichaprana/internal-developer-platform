@@ -32,6 +32,9 @@ metadata:
   name: developer-platform
   title: Internal Developer Platform
   description: Service catalog, software templates, and golden paths for product teams.
+  annotations:
+    # Publish this repository's TechDocs site on the platform's catalog entity.
+    backstage.io/techdocs-ref: dir:.
 spec:
   owner: platform-engineering
   domain: platform
