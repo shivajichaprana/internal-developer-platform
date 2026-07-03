@@ -1,0 +1,42 @@
+# Conditional (attribute-scoped) RBAC policies for the developer platform.
+#
+# These refine the role grants in permissions/rbac-policy.csv: where the CSV
+# gives a role a broad decision on a resource type, the entries here narrow
+# WRITE access using catalog rules evaluated per entity at request time. Each
+# document maps one role to one plugin's resource type with a condition tree.
+#
+#   result: CONDITIONAL   — the decision is delegated to the condition tree
+#   permissionMapping     — the actions the condition tree applies to
+#   $currentUser          — alias expanded to the requesting user's entity ref
+#                           and group memberships (ownership claims)
+---
+# Service developers may modify or unregister only entities their own group
+# owns; every other entity remains read-only for them.
+result: CONDITIONAL
+roleEntityRef: 'role:default/service-developer'
+pluginId: catalog
+resourceType: catalog-entity
+permissionMapping:
+  - update
+  - delete
+conditions:
+  rule: IS_ENTITY_OWNER
+  resourceType: catalog-entity
+  params:
+    claims:
+      - $currentUser
+---
+# Reliability engineers may update only entities wired to Kubernetes (those
+# carrying the workload annotation) — they tune runtime metadata for services
+# they operate without touching unrelated catalog entries.
+result: CONDITIONAL
+roleEntityRef: 'role:default/reliability-engineer'
+pluginId: catalog
+resourceType: catalog-entity
+permissionMapping:
+  - update
+conditions:
+  rule: HAS_ANNOTATION
+  resourceType: catalog-entity
+  params:
+    annotation: backstage.io/kubernetes-id

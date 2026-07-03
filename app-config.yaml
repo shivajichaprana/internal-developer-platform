@@ -88,6 +88,53 @@ auth:
 # Scaffolder (software templates) is configured with its template set.
 scaffolder: {}
 
-# Role-based access control over catalog and scaffolder actions.
+# Kubernetes plugin wiring. The catalog surfaces live workload state for any
+# entity annotated with backstage.io/kubernetes-id; the backend reads from the
+# clusters listed here. Cluster endpoints and credentials are injected from
+# the environment — no cluster data is stored in this file.
+kubernetes:
+  serviceLocatorMethod:
+    # Query every configured cluster for each entity's workloads.
+    type: multiTenant
+  clusterLocatorMethods:
+    - type: config
+      clusters:
+        - name: primary
+          url: ${K8S_CLUSTER_URL}
+          # Read-only service account bearer token. Grant get/list/watch on
+          # workload objects only (Deployments, ReplicaSets, Pods, Services,
+          # HorizontalPodAutoscalers, Ingresses) — never cluster-admin.
+          authProvider: serviceAccount
+          serviceAccountToken: ${K8S_SA_TOKEN}
+          # Base64-encoded CA bundle for the cluster endpoint. Ship the CA
+          # instead of disabling TLS verification.
+          caData: ${K8S_CA_DATA}
+          skipTLSVerify: false
+          skipMetricsLookup: false
+  # Custom resources to surface on entity Kubernetes tabs alongside the
+  # built-in workload types.
+  customResources:
+    - group: argoproj.io
+      apiVersion: v1alpha1
+      plural: rollouts
+
+# Role-based access control over catalog, scaffolder, Kubernetes, and the
+# permission administration endpoints. Role definitions and grants live in
+# permissions/rbac-policy.csv; owner- and annotation-scoped refinements live
+# in permissions/policy.yaml. Both files hot-reload on change.
 permission:
   enabled: true
+  rbac:
+    policies-csv-file: ./permissions/rbac-policy.csv
+    conditionalPoliciesFile: ./permissions/policy.yaml
+    policyFileReload: true
+    pluginsWithPermission:
+      - catalog
+      - scaffolder
+      - permission
+      - kubernetes
+    admin:
+      users:
+        - name: user:default/platform-admin
+      superUsers:
+        - name: user:default/platform-admin

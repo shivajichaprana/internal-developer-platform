@@ -1,0 +1,26 @@
+# Platform-managed components.
+#
+# The backstage.io/kubernetes-id annotation links an entity to its running
+# workloads: the Kubernetes plugin queries the clusters configured under
+# kubernetes.* in app-config.yaml for objects labeled
+# backstage.io/kubernetes-id=<value> and renders them on the entity's
+# Kubernetes tab. backstage.io/kubernetes-namespace narrows the query to a
+# single namespace.
+---
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: platform-portal
+  title: Platform Portal
+  description: The developer portal itself — catalog, scaffolder, TechDocs, and Kubernetes views.
+  annotations:
+    backstage.io/kubernetes-id: platform-portal
+    backstage.io/kubernetes-namespace: developer-platform
+  tags:
+    - backstage
+    - platform
+spec:
+  type: website
+  lifecycle: production
+  owner: platform-engineering
+  system: developer-platform

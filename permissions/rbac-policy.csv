@@ -1,0 +1,57 @@
+# RBAC policy for the developer platform (casbin CSV model).
+#
+# p-lines: p, <role>, <permission or resource type>, <action>, <allow|deny>
+# g-lines: g, <user or group>, <role>
+#
+# Roles are granted to catalog Groups; membership flows from the org model in
+# catalog/org.yaml. Broad grants live here; owner- and annotation-scoped
+# exceptions are refined in permissions/policy.yaml (conditional policies).
+
+# --- platform-admin: full control of catalog, templates, Kubernetes, and RBAC
+p, role:default/platform-admin, catalog-entity, read, allow
+p, role:default/platform-admin, catalog-entity, update, allow
+p, role:default/platform-admin, catalog-entity, delete, allow
+p, role:default/platform-admin, catalog.entity.create, create, allow
+p, role:default/platform-admin, catalog.location.create, create, allow
+p, role:default/platform-admin, catalog.location.read, read, allow
+p, role:default/platform-admin, catalog.location.delete, delete, allow
+p, role:default/platform-admin, scaffolder-template, read, allow
+p, role:default/platform-admin, scaffolder-action, use, allow
+p, role:default/platform-admin, scaffolder.task.create, create, allow
+p, role:default/platform-admin, scaffolder.task.read, read, allow
+p, role:default/platform-admin, scaffolder.task.cancel, use, allow
+p, role:default/platform-admin, kubernetes.proxy, use, allow
+p, role:default/platform-admin, kubernetes.clusters.read, read, allow
+p, role:default/platform-admin, kubernetes.resources.read, read, allow
+p, role:default/platform-admin, policy-entity, read, allow
+p, role:default/platform-admin, policy-entity, create, allow
+p, role:default/platform-admin, policy-entity, update, allow
+p, role:default/platform-admin, policy-entity, delete, allow
+
+# --- service-developer: use golden paths, register and read services.
+# --- update/delete are owner-scoped via permissions/policy.yaml
+p, role:default/service-developer, catalog-entity, read, allow
+p, role:default/service-developer, catalog.entity.create, create, allow
+p, role:default/service-developer, catalog.location.create, create, allow
+p, role:default/service-developer, catalog.location.read, read, allow
+p, role:default/service-developer, scaffolder-template, read, allow
+p, role:default/service-developer, scaffolder-action, use, allow
+p, role:default/service-developer, scaffolder.task.create, create, allow
+p, role:default/service-developer, scaffolder.task.read, read, allow
+p, role:default/service-developer, kubernetes.clusters.read, read, allow
+p, role:default/service-developer, kubernetes.resources.read, read, allow
+
+# --- reliability-engineer: read everything, operate Kubernetes tooling.
+# --- entity updates are annotation-scoped via permissions/policy.yaml
+p, role:default/reliability-engineer, catalog-entity, read, allow
+p, role:default/reliability-engineer, catalog.location.read, read, allow
+p, role:default/reliability-engineer, scaffolder-template, read, allow
+p, role:default/reliability-engineer, scaffolder.task.read, read, allow
+p, role:default/reliability-engineer, kubernetes.proxy, use, allow
+p, role:default/reliability-engineer, kubernetes.clusters.read, read, allow
+p, role:default/reliability-engineer, kubernetes.resources.read, read, allow
+
+# --- role assignments (groups defined in catalog/org.yaml)
+g, group:default/platform-engineering, role:default/platform-admin
+g, group:default/application-development, role:default/service-developer
+g, group:default/site-reliability, role:default/reliability-engineer

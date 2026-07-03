@@ -5,6 +5,10 @@ metadata:
 ${{ '  description: ' + (values.description | dump) if values.description else '' }}
   annotations:
     backstage.io/techdocs-ref: dir:.
+    # Links the service to its running workloads: the portal's Kubernetes tab
+    # shows cluster objects labeled backstage.io/kubernetes-id=<this value>.
+    # Apply the same label to the service's Deployment and Service manifests.
+    backstage.io/kubernetes-id: ${{ values.name | dump }}
   tags:
     - typescript
     - nodejs
