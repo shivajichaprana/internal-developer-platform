@@ -12,6 +12,8 @@ theme:
 
 nav:
   - Home: index.md
+  - Architecture: architecture.md
+  - Onboarding: onboarding.md
   - Software catalog: software-catalog.md
   - Software templates: software-templates.md
   - Authoring documentation: authoring-docs.md
